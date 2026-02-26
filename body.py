@@ -5,6 +5,7 @@ class Body:
         # Constructors
         self.name = name
         self.mass = mass # in kilograms
+        self.radius = radius
         self.pos = np.array(pos, dtype= float)
         self.velocity = np.array(velocity, dtype= float)
         self.color = color
