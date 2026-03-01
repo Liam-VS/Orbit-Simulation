@@ -2,17 +2,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from body import Body
+from planets import sun,earth, planets
+from physics import calculate_acceleration
 
-# Information is primarily obtained from https://science.nasa.gov/solar-system/planets/
-#   Mass (kg) is measured in kilograms
-#   Radius (m) is measured in metres
-#   Velocity (m/s) is measured in metres per second
-
+'''
+Information is primarily obtained from https://science.nasa.gov/solar-system/planets/
+  Mass (kg) is measured in kilograms
+  Radius (m) is measured in metres
+  Velocity (m/s) is measured in metres per second
+'''
+  
 # ----- CONSTANTS -----
 au = 1.496e11               # Astronomical Unit (distance from earth to sun)
 g = 6.674e-11               # Gravitational Constant in SI units (m, kg, s)
 
 # ----- DEFINING THE CELESITAL BODIES -----
+'''
 sun = Body(
     name = "Sun",
     mass = 1.989e30,
@@ -54,7 +59,7 @@ def compute_acceleration(bodies):
     acceleration_vector = earth_acceleration * direction
 
     return acceleration_vector
-
+'''
 
 # ----- CREATING THE ANIMATION -----
 # Create the figure
@@ -63,22 +68,34 @@ axis.set_facecolor('black')
 axis.set_aspect('equal')
 
 # Identify axis limit
-limit = 2e11 # Big enough to fit earths orbit
+limit = 1.5e11# Big enough to fit earths orbit
 axis.set_xlim(-limit, limit)
 axis.set_ylim(-limit, limit)
 
 # Plotting celestial objects (sizes of planets are unrealistic to ensure visibility)
-sun_point, = axis.plot(sun.pos[0], sun.pos[1], 'o', color=sun.color, markersize=10)
-earth_point, = axis.plot([earth.pos[0]], [earth.pos[1]], 'o', color=earth.color, markersize=1)
+sun_point, = axis.plot(sun.pos[0], sun.pos[1], 'o', color=sun.color, markersize=100)
 
-def update(frame):
+planet_points = {}
+for planet in planets:
+    point, = axis.plot(planet.pos[0], planet.pos[1], 'o', color=planet.color, markersize=planet.size)
+    planet_points[planet.name] = point
+
+#mercury_point = axis.plot(planets[0].pos[0], planets[0].pos[1], 'o', color=planets[0].color, markersize=2)
+#venus_point = axis.plot(planets[1].pos[0], planets[1].pos[1], 'o', color=planets[1].color, markersize=6)
+#earth_point, = axis.plot(planets[2].pos[0], planets[2].pos[1], 'o', color=planets[2].color, markersize=6)
+
+def update(frames):
     dt = 86400 # one day step size
-    earth.velocity += compute_acceleration(bodies) * dt  # update velocity 
-    earth.pos += earth.velocity * dt                     # update position
-    print(earth.pos)
+    
 
-    earth_point.set_data([earth.pos[0]], [earth.pos[1]])
-    return [earth_point]
+    for planet in planets:
+        planet_point = planet_points[planet.name]
+
+        planet.velocity += calculate_acceleration(planet, sun) * dt  # update velocity 
+        planet.pos += planet.velocity * dt                     # update position
+        print(earth.pos)
+        planet_point.set_data([planet.pos[0]], [planet.pos[1]])
+    return planet_points
 
 stellar_animation = animation.FuncAnimation(fig=fig, func=update, frames=365, interval=30)
 plt.show()

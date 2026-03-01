@@ -1,14 +1,16 @@
 import numpy as np
 
 class Body:
-    def __init__(self, name, radius, mass, pos, velocity, color= 'white'):
+    def __init__(self, name, radius, mass, pos, velocity, size, color= 'white'):
         # Constructors
         self.name = name
         self.mass = mass # in kilograms
         self.radius = radius
         self.pos = np.array(pos, dtype= float)
         self.velocity = np.array(velocity, dtype= float)
+        self.size = size
         self.color = color
+
 
         # Going to need to store and calculate
         self.acceleration = np.array([0.0, 0.0])
